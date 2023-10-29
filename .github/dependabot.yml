@@ -12,7 +12,7 @@ updates:
     groups:
       everything:
         patterns:
-          - *
+          - '*'
 
   - package-ecosystem: "npm"
     directory: "/"
