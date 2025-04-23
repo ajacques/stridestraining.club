@@ -1,0 +1,3 @@
+{{ $sass := resources.Get "styles/index.scss" }}
+{{ $style := $sass | css.Sass | minify | resources.Fingerprint "sha256" }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">

@@ -1,0 +1,7 @@
+baseURL = 'https://samilee.me'
+languageCode = 'en-us'
+title = 'Sami Lee'
+
+[outputs]
+  home = ['HTML']
+  page = ['HTML']

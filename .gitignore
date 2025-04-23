@@ -1,35 +1,13 @@
-# Bridgetown
-output
-.bridgetown-cache
-.bridgetown-metadata
-.bridgetown-webpack
+# Generated files by hugo
+/public/
+/resources/_gen/
+/assets/jsconfig.json
+hugo_stats.json
 
-# Dependency folders
-node_modules
-bower_components
-vendor
+# Executable may be added to repository
+hugo.exe
+hugo.darwin
+hugo.linux
 
-# Caches
-.sass-cache
-.npm
-.node_repl_history
-
-# Ignore bundler config.
-/.bundle
-
-# Ignore Byebug command history file.
-.byebug_history
-
-# dotenv environment variables file
-.env
-
-# Mac files
-.DS_Store
-
-# Yarn
-yarn-error.log
-yarn-debug.log*
-.pnp/
-.pnp.js
-# Yarn Integrity file
-.yarn-integrity
+# Temporary lock file while building
+/.hugo_build.lock

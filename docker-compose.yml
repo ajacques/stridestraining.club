@@ -1,8 +1,4 @@
 ---
-# Docker Compose 2.4 is for local development
-# https://www.heroku.com/podcasts/codeish/57-discussing-docker-containers-and-kubernetes-with-a-docker-captain - Source on that.
-version: '2.4'
-
 x-app: &app
   mem_limit: 512m
   build:
@@ -13,24 +9,14 @@ x-app: &app
     target: development
   volumes:
     - .:/usr/src/app:cached
-    # Cache package folders so they persist between runs.
-    - bundler:/usr/local/bundle:delegated
-    - node_modules:/usr/src/app/node_modules:delegated
   tmpfs:
     - /tmp
 
 services:
   web:
-    <<: *app
-    command: >
-      bash -c "bundle check || bundle install &&
-      yarn install --check-files &&
-      yarn start --host '0.0.0.0'"
+    image: hugomods/hugo
+    command: hugo server --bind 0.0.0.0
     ports:
-      - "${PORT:-4000}:4000"
-      - "4001:4001"
-      - "4002:4002"
-
-volumes:
-  bundler:
-  node_modules: 
+      - "1313:1313"
+    volumes:
+      - .:/src:cached
