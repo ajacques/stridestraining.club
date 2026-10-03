@@ -1,0 +1,117 @@
+@import "vars";
+
+.about,
+.philosophy {
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 2rem 2rem 0;
+}
+
+.about-heading {
+  position: relative;
+  margin: 1.5rem 0 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $c-blue;
+
+  .arc-lines {
+      position: absolute;
+    bottom: -0.75rem;
+    left: 0.25rem;
+    transform: translateX(-40%);
+    width: 11rem;
+    height: auto;
+  }
+}
+
+.about p {
+  max-width: 26rem;
+  margin: 0.75rem 0 0 1.5rem;
+}
+
+.philosophy {
+  padding-bottom: 4rem;
+}
+
+.philosophy-heading {
+  margin: 5rem 0 2rem;
+  text-align: right;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: $c-blue;
+}
+
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: philosophy;
+
+  li {
+    position: relative;
+    border-left: 0.3rem solid #4FA3DE;
+    padding-left: 1rem;
+    padding-top: 0.25rem;
+
+    &::before {
+      content: attr(data-n);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-25%);
+      font-size: 9rem;
+      font-weight: 700;
+      line-height: 0.85;
+      color: #D6EBF7;
+      z-index: -1;
+    }
+
+    h3 {
+      margin: 0 0 0.5rem;
+      padding-bottom: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $c-text;
+      border-bottom: 1px solid #B8C0C8;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+@media (max-width: 48rem) {
+  .about,
+  .philosophy {
+    padding: 1rem 1rem 0;
+  }
+
+  .about p {
+    margin-left: 0;
+    max-width: none;
+  }
+
+  .philosophy-heading {
+    margin: 3rem 0 1.5rem;
+  }
+
+  .philosophy-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    li {
+      padding-left: 2.5rem;
+
+      &::before {
+        font-size: 5rem;
+        transform: none;
+      }
+    }
+  }
+}
