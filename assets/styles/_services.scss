@@ -10,7 +10,6 @@
     content: "";
     position: absolute;
     inset: 0.6rem 0.4rem;
-    //background: #3E8CC9;
     z-index: 1;
   }
 
@@ -24,6 +23,30 @@
     pointer-events: none;
   }
 
+}
+
+.services-heading {
+  position: relative;
+  width: max-content;
+  margin: 0 0 3.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+
+  .arc-line {
+    position: absolute;
+    bottom: -1rem;
+    left: 2rem;
+    width: 9rem;
+    z-index: 0;
+    pointer-events: none;
+
+    .arc-lines {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
 }
 
 .services-squiggles {
@@ -60,29 +83,6 @@
   margin: 0 auto;
 }
 
-.services-heading {
-  position: relative;
-  width: max-content;
-  margin: 0 0 3.5rem;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #fff;
-
-  .arc-line {
-    position: absolute;
-    bottom: -1rem;
-    left: 2rem;
-    width: 9rem;
-    z-index: 0;
-    pointer-events: none;
-
-    .arc-lines {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-  }
-}
 
 .services-grid {
   display: grid;
@@ -163,6 +163,7 @@
 
   .services-heading {
     margin-bottom: 2rem;
+    margin-top: 4rem;
   }
 
   .services-grid {
