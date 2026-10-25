@@ -1,0 +1,141 @@
+@import "vars";
+
+.contact {
+  position: relative;
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+.contact-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: calc(100% + 2rem);
+  margin-left: -2rem;
+
+  // Each rule is a full-bleed gold line; widths taper so lines get shorter downward.
+  span {
+    height: 0.3rem;
+    border-radius: 0.15rem;
+    background: $c-gold;
+
+    &:nth-child(1) {
+      width: 100%;
+    }
+
+    &:nth-child(2) {
+      width: 81%;
+    }
+
+    &:nth-child(3) {
+      width: 60%;
+    }
+  }
+}
+
+.contact-heading {
+  margin: 2.5rem 0 2rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: $c-blue;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 31rem;
+
+  label {
+    margin-bottom: 0.35rem;
+    font-size: 0.9rem;
+    color: $c-text;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #B8C0C8;
+    border-radius: 0.35rem;
+    background: #fff;
+    font: inherit;
+    font-size: 0.95rem;
+    color: $c-text;
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &:focus {
+      outline: 2px solid $c-light-blue;
+      outline-offset: 1px;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+
+  label + input,
+  label + textarea {
+    margin-bottom: 1.1rem;
+  }
+}
+
+.contact-submit {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1.6rem;
+  border: 0;
+  border-radius: 2rem;
+  background: #CFEBFE;
+  color: $c-text;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #B6DFFB;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+/* Off-screen rather than display:none so bots filling every field still trip it. */
+.contact-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-status {
+  min-height: 1.5rem;
+  margin: 0.9rem 0 0;
+  font-size: 0.9rem;
+  color: $c-text;
+
+  &.is-error {
+    color: #B3261E;
+  }
+}
+
+@media (max-width: 48rem) {
+  .contact {
+    padding: 4rem 1rem 4rem;
+  }
+
+  .contact-lines {
+    margin-left: -1rem;
+  }
+
+  .contact-heading {
+    margin: 1.5rem 0 1.5rem;
+  }
+}

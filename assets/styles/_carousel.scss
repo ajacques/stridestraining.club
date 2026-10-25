@@ -1,0 +1,128 @@
+@import "vars";
+
+.coach-carousel {
+  position: relative;
+  height: 30rem;
+}
+
+.coach-stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30rem;
+  height: 30rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translate(-50%, -50%);
+}
+
+.coach-slide {
+  // Horizontal offset from the stage center; front uses 0, side slides sit this far out.
+  --gap: 4.5rem;
+  // Size multiplier relative to the base 17rem slide width; front is enlarged.
+  --scale: 0.62;
+  // Opacity for depth; side slides are faded, front is fully opaque.
+  --dim: 0.6;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 17rem;
+  opacity: var(--dim);
+  transform: translate(calc(-50% - var(--gap)), -50%) scale(var(--scale));
+  transition: transform 0.7s ease, opacity 0.7s ease;
+  will-change: transform z-index;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  // Front: centered, enlarged, opaque, stacked above the others.
+  &.is-front {
+    --gap: 0rem;
+    --scale: 1.15;
+    --dim: 1;
+    z-index: 3;
+  }
+
+  // Side slides: offset left/right and shrunk so the front mostly covers them.
+  &.is-left,
+  &.is-right {
+    --gap: 4.5rem;
+    --scale: 0.62;
+    --dim: 0.6;
+    z-index: 1;
+  }
+
+  // Left slide: shift left of center by --gap.
+  &.is-left {
+    transform: translate(calc(-50% - var(--gap)), -50%) scale(var(--scale));
+  }
+
+  // Right slide: shift right of center by --gap.
+  &.is-right {
+    transform: translate(calc(-50% + var(--gap)), -50%) scale(var(--scale));
+  }
+
+  // Hidden slide: collapsed at center, transparent, waiting to re-enter.
+  &.is-back {
+    --gap: 0rem;
+    --scale: 0.5;
+    --dim: 0;
+    z-index: 0;
+  }
+}
+
+.coach-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  // Above the slides, but below the sticky header so it can't cover the nav.
+  z-index: 5;
+
+  span {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    background: $c-light-blue;
+    transition: background 0.3s ease;
+    cursor: pointer;
+
+    &.is-active {
+      background: $c-gold;
+    }
+  }
+}
+
+@media (max-width: 48rem) {
+  .coach-carousel {
+    height: 22rem;
+  }
+
+  .coach-stage {
+    width: 100%;
+    height: 22rem;
+  }
+
+  .coach-slide {
+    --gap: 3.25rem;
+    --scale: 0.55;
+    width: 12rem;
+
+    &.is-front {
+      --scale: 1;
+    }
+
+    &.is-left,
+    &.is-right {
+      --gap: 3.25rem;
+      --scale: 0.55;
+    }
+  }
+}

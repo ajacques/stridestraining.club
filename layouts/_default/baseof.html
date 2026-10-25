@@ -10,16 +10,17 @@
   <body>
     <header class="site-header">
       <a class="site-logo" href="{{ .Site.BaseURL }}">
-        <img src="/logo.png" alt="Strides Training Club" width="48" height="48">
+        {{ $logo := resources.Get "logo-shadow.svg" }}
+        <img class="logo-mark" src="{{ $logo.RelPermalink }}" alt="Strides Training Club" width="176" height="202">
       </a>
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <nav class="site-nav">
-        <a href="/about/">About</a>
-        <a href="/services/">Services</a>
-        <a href="/coach/">Coach</a>
-        <a href="/contact/">Contact</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#coach">Coach</a>
+        <a href="#contact">Contact</a>
       </nav>
     </header>
     <main role="main">
@@ -30,6 +31,113 @@
       t.addEventListener('click', () => {
         document.body.classList.toggle('nav-open');
         t.setAttribute('aria-expanded', document.body.classList.contains('nav-open'));
+      });
+    </script>
+    <script>
+      /* Nav links whose href points at a section id on this page. */
+      const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"]'));
+      /* Matching sections plus their links, in page order. */
+      const sections = navLinks
+        .map((link) => ({ link, section: document.querySelector(link.getAttribute('href')) }))
+        .filter((entry) => entry.section);
+
+      const markActive = () => {
+        /* Viewport line at which a section counts as current: halfway down the
+           visible area below the sticky header. */
+        const line = window.innerHeight / 2;
+        let current = null;
+
+        sections.forEach((entry) => {
+          const rect = entry.section.getBoundingClientRect();
+          if (rect.top <= line && rect.bottom > line) current = entry;
+        });
+
+        /* Nothing straddles the middle: fall back to the last section that has
+           started, so links stay highlighted between tall/odd sections. */
+        if (!current) {
+          sections.forEach((entry) => {
+            if (entry.section.getBoundingClientRect().top <= line) current = entry;
+          });
+        }
+
+        navLinks.forEach((link) => {
+          const active = current && link === current.link;
+          link.classList.toggle('is-active', Boolean(active));
+          if (active) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        });
+      };
+
+      markActive();
+      addEventListener('scroll', markActive, { passive: true });
+      addEventListener('resize', markActive);
+    </script>
+    <script>
+      document.querySelectorAll('.coach-carousel').forEach((carousel) => {
+        /* Slide elements in DOM order; their array position identifies each photo. */
+        const slides = Array.from(carousel.querySelectorAll('.coach-slide'));
+        /* Dot elements, one per slide, mirroring the slide order. */
+        const dots = Array.from(carousel.querySelectorAll('.coach-dots span'));
+        if (slides.length === 0) return;
+        /* Index of the slide currently in the front (largest) position. */
+        let index = 1;
+
+        const render = () => {
+          slides.forEach((slide, i) => {
+            /* Distance ahead of the front slide, wrapping around: 0 = front,
+               1 = first on the right, length - 1 = first on the left. */
+            const offset = (i - index + slides.length) % slides.length;
+            slide.classList.remove('is-front', 'is-left', 'is-right', 'is-back');
+            if (offset === 0) slide.classList.add('is-front');
+            else if (offset === 1) slide.classList.add('is-right');
+            else if (offset === slides.length - 1) slide.classList.add('is-left');
+            else if (offset < slides.length / 2) slide.classList.add('is-right');
+            else slide.classList.add('is-left');
+          });
+          dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+        };
+
+        render();
+
+        /* Interval id for the auto-advance loop; null when paused. */
+        let timer = null;
+        /* Move the front position one slide to the right (slides drift left). */
+        const advance = () => {
+          index = (index + 1) % slides.length;
+          render();
+        };
+        /* Begin auto-advancing every 3.5s unless the user prefers reduced motion. */
+        const start = () => {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          if (!timer) timer = setInterval(advance, 3500);
+        };
+        /* Pause auto-advance, e.g. while hovering so the dots can be clicked. */
+        const stop = () => {
+          clearInterval(timer);
+          timer = null;
+        };
+
+        start();
+        carousel.addEventListener('mouseenter', stop);
+        carousel.addEventListener('mouseleave', start);
+
+        /* Clicking a dot jumps straight to that slide. */
+        dots.forEach(function (dot, i) {
+          dot.addEventListener('click', () => {
+            index = i;
+            render();
+          });
+        });
+
+        /* Clicking a side photo brings it into the front position. */
+        carousel.querySelectorAll('.coach-slide').forEach((slide) => {
+          slide.addEventListener('click', () => {
+            if (!slide.classList.contains('is-front')) {
+              index = slides.indexOf(slide);
+              render();
+            }
+          });
+        });
       });
     </script>
   </body>

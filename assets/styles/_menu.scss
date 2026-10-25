@@ -9,7 +9,7 @@
   background: #fff;
   border-bottom: 1px solid $c-border;
 
-  .site-logo img {
+  .site-logo .logo-mark {
     display: block;
     height: 44px;
     width: auto;
@@ -25,9 +25,16 @@
     font-weight: 400;
     font-size: 15px;
     text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
       color: $c-blue;
+    }
+
+    &.is-active {
+      background: rgba($c-gold, 0.25);
     }
   }
 }

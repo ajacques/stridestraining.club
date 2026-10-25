@@ -1,0 +1,54 @@
+{{ $endpoint := .Site.Params.contactEndpoint }}
+{{ $thanks := "/thanks/" | absURL }}
+<script>
+  (() => {
+    /* Set on page load so the Worker can reject sub-second (bot) submissions. */
+    const startedAt = Date.now();
+    /* Endpoint comes from hugo.toml; empty means the plain HTML POST is used. */
+    const endpoint = {{ $endpoint | jsonify }};
+    /* Thanks page, used as the fallback destination after a JSON success. */
+    const thanksUrl = {{ $thanks | jsonify }};
+
+    document.querySelectorAll(".contact-form").forEach((form) => {
+      if (!endpoint) return;
+
+      const status = form.querySelector("[data-contact-status]");
+      const elapsed = form.querySelector("[data-contact-elapsed]");
+      const submit = form.querySelector(".contact-submit");
+
+      const showStatus = (message, isError) => {
+        if (!status) return;
+        status.textContent = message;
+        status.classList.toggle("is-error", Boolean(isError));
+      };
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const data = Object.fromEntries(new FormData(form));
+        if (elapsed) data.elapsed = String(Date.now() - startedAt);
+
+        submit.disabled = true;
+        showStatus("Sending…", false);
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json().catch(() => ({}));
+
+          if (!response.ok || !result.ok) {
+            throw new Error(result.error || "Something went wrong. Please try again.");
+          }
+
+          window.location.assign(result.redirect || thanksUrl);
+        } catch (error) {
+          submit.disabled = false;
+          showStatus(error.message, true);
+        }
+      });
+    });
+  })();
+</script>

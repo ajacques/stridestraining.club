@@ -14,7 +14,7 @@ x-app: &app
 
 services:
   web:
-    image: hugomods/hugo
+    image: hugomods/hugo:exts
     command: hugo server --bind 0.0.0.0
     ports:
       - "1313:1313"

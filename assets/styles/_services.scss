@@ -1,0 +1,172 @@
+@import "vars";
+
+.services {
+  position: relative;
+  margin: 4rem 0 0;
+  padding: 6.5rem 2rem 5rem;
+  color: #fff;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0.6rem 0.4rem;
+    //background: #3E8CC9;
+    z-index: 1;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/services-background.svg") left top / 100% 100% no-repeat;
+    background-size: cover;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+}
+
+.services-squiggles {
+  position: absolute;
+  width: 11rem;
+  height: 12.5rem;
+  background: url("/services/squiggles.svg") center / contain no-repeat;
+  opacity: 0.9;
+  z-index: 3;
+  pointer-events: none;
+
+  &--top-right {
+    top: 0;
+    right: 14%;
+    transform: translateY(-18%);
+  }
+
+  &--bottom-right {
+    right: -1rem;
+    bottom: -1rem;
+  }
+
+  &--top-left {
+    top: 0;
+    left: -1rem;
+    transform: translateY(-18%);
+  }
+}
+
+.services-inner {
+  position: relative;
+  z-index: 4;
+  max-width: 74rem;
+  margin: 0 auto;
+}
+
+.services-heading {
+  position: relative;
+  width: max-content;
+  margin: 0 0 3.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+
+  .arc-line {
+    position: absolute;
+    bottom: -1rem;
+    left: 2rem;
+    width: 9rem;
+    z-index: 0;
+    pointer-events: none;
+
+    .arc-lines {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    position: relative;
+  }
+
+  h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+}
+
+.services-meta {
+  font-style: italic;
+  font-weight: 400;
+  color: $c-pale-blue;
+}
+
+.services-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.services-cta {
+  display: inline-block;
+  margin-top: 3rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  background: #fff;
+  color: $c-blue;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-decoration: none;
+
+  &:hover {
+    background: $c-pale-blue;
+  }
+}
+
+@media (max-width: 48rem) {
+  .services {
+    margin-top: 3rem;
+    padding: 4.5rem 1rem 3.5rem;
+
+    &::before {
+      inset: 0.4rem 0.25rem;
+    }
+  }
+
+  .services-squiggles {
+    width: 7rem;
+    height: 8rem;
+  }
+
+  .services-heading {
+    margin-bottom: 2rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}

@@ -8,16 +8,38 @@ main {
   margin: 0 auto;
 }
 
-.hero-mask {
+.hero-art {
+  position: relative;
   flex: 0 0 62%;
-  height: 26rem;
-  background: url("/hero-background.jpg") center/cover no-repeat;
-  -webkit-mask: url("/hero.svg") left center/contain no-repeat;
-  mask: url("/hero.svg") left center/contain no-repeat;
+  aspect-ratio: 1060 / 502;
+}
+
+.hero-art-photo {
+  position: absolute;
+  inset: 0;
+  background: url("/hero-photo.png") left top/100% auto no-repeat;
+}
+
+.tagline-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: auto 0;
+}
+
+.tagline-sun {
+  position: absolute;
+  top: 50%;
+  left: -9rem;
+  width: 11rem;
+  height: auto;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .tagline {
-  margin: auto 0;
+  position: relative;
+  margin: 0;
   max-width: 28rem;
   font-size: 2rem;
   font-weight: 600;
@@ -69,16 +91,19 @@ main {
     padding: 0 1rem;
   }
 
-  .hero-mask {
+  .hero-art {
     flex: none;
     width: 100%;
-    height: auto;
-    aspect-ratio: 1060 / 497;
   }
 
   .tagline {
     font-size: 1.3rem;
     text-align: center;
+  }
+
+  .tagline-sun {
+    left: -0.5rem;
+    width: 5rem;
   }
 
   .hero .coach-row {

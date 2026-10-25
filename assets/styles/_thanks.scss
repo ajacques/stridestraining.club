@@ -1,0 +1,44 @@
+@import "vars";
+
+.thanks {
+  position: relative;
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 5rem 2rem 7rem;
+}
+
+.thanks-heading {
+  margin: 2.5rem 0 1.5rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: $c-blue;
+}
+
+.thanks-message {
+  max-width: 31rem;
+  margin: 0 0 2rem;
+}
+
+.thanks-link {
+  display: inline-block;
+  padding: 0.65rem 1.6rem;
+  border-radius: 2rem;
+  background: #CFEBFE;
+  color: $c-text;
+  text-decoration: none;
+  font-size: 0.95rem;
+
+  &:hover {
+    background: #B6DFFB;
+  }
+}
+
+@media (max-width: 48rem) {
+  .thanks {
+    padding: 4rem 1rem;
+  }
+
+  .thanks-heading {
+    margin-top: 1.5rem;
+  }
+}

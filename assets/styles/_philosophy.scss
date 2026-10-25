@@ -1,0 +1,86 @@
+.philosophy {
+  padding-bottom: 4rem;
+}
+
+.philosophy-heading {
+  margin: 5rem 0 2rem;
+  text-align: right;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: $c-gold;
+}
+
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: philosophy;
+
+  li {
+    position: relative;
+    padding-left: 2rem;
+    padding-top: 0.25rem;
+
+    & + li {
+      background: url("/PhilosophyLine.svg") left top / 0.625rem 100% no-repeat;
+    }
+
+    &::before {
+      content: attr(data-n);
+      position: absolute;
+      bottom: 0;
+      left: 0.25em;
+      transform: translateX(-25%);
+      font-size: 9rem;
+      font-weight: 700;
+      line-height: 0.85;
+      color: $c-pale-blue;
+      z-index: -1;
+    }
+
+    h3 {
+      margin: 0 0 0.5rem;
+      padding-bottom: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $c-text;
+      border-bottom: 1px solid #B8C0C8;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+@media (max-width: 48rem) {
+  .philosophy {
+    padding: 1rem 1rem 0;
+  }
+
+  .philosophy-heading {
+    margin: 3rem 0 1.5rem;
+  }
+
+  .philosophy-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    li {
+      padding-left: 2.5rem;
+
+      & + li {
+        background-size: 0.625rem 100%;
+      }
+
+      &::before {
+        font-size: 5rem;
+        transform: none;
+      }
+    }
+  }
+}

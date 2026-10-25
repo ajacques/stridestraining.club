@@ -1,7 +1,12 @@
 {{ define "main" }}
   <section class="hero">
-    <div class="hero-mask" role="img" aria-label="Strides Training Club"></div>
-    <p class="tagline">Improving our stride for each season of life.</p>
+    <div class="hero-art" role="img" aria-label="Strides Training Club">
+      <div class="hero-art-photo"></div>
+    </div>
+    <div class="tagline-wrap">
+      <img class="tagline-sun" src="/HeroSun.svg" alt="" width="179" height="183">
+      <p class="tagline">Training in the Glory days</p>
+    </div>
   </section>
   <section class="coach-row">
     <div class="coach-track">
@@ -17,9 +22,9 @@
       </div>
     </div>
   </section>
-  <section class="about">
+  <section class="about" id="about">
     <h2 class="about-heading">
-      <img class="arc-lines" src="/trackshape.svg" alt="" width="266" height="143">
+      {{ partial "trackshape.html" (dict "color" "#EAB464" "width" "266" "height" "143") }}
       About Strides Training Club
     </h2>
     <p>Strides Training Club is athletic coaching built for real life. Off-the-shelf plans and rigid AI apps fail because they don't account for your work, family, or travel. We design human-first training around your actual schedule&mdash;turning training from an obligation into the freedom to live healthily.</p>
@@ -44,5 +49,103 @@
         <p>Stay supported with 1-on-1 coach check-ins and options for 1:1 workouts and local Seattle group sessions.</p>
       </li>
     </ol>
+  </section>
+  <section class="services" id="services">
+    <div class="services-inner">
+      <h2 class="services-heading">
+        Services
+        <span class="arc-line">
+          {{ partial "trackshape.html" (dict "color" "#8FBEDD" "flip" true) }}
+        </span>
+      </h2>
+      <ul class="services-grid">
+        <li>
+          <span class="services-squiggles services-squiggles--top-right" aria-hidden="true"></span>
+          <h3>Routine and Form Check</h3>
+          <p class="services-meta">Consultation | $85 / hour</p>
+          <p>A high-impact single session (in-person or virtual) to review your routine, break through plateaus, and optimize your schedule to fit your lifestyle. In-person sessions include hands-on running form analysis and technique tips.</p>
+          <ul class="services-list">
+            <li><strong>Format:</strong> Single session (In-person or Virtual)</li>
+            <li><strong>Includes:</strong> Lifestyle &amp; schedule evaluation, barrier identification, personalized goal strategy, and hands-on running form analysis (if in-person)</li>
+            <li><strong>Best for:</strong> Athletes seeking quick directional clarity, schedule optimization, or form tweaks</li>
+          </ul>
+        </li>
+        <li>
+          <span class="services-squiggles services-squiggles--bottom-right" aria-hidden="true"></span>
+          <h3>1:1 Run Strong Coaching</h3>
+          <p class="services-meta">Fully Personalized Training | $175 / month</p>
+          <p>Complete, individualized running and strength programming designed specifically for your target race goals. Includes dedicated 1:1 support, continuous workout feedback, custom pacing/HR zones, and mental performance strategies.</p>
+          <ul class="services-list">
+            <li><strong>Format:</strong> Ongoing monthly 1:1 coaching (3&ndash;6 month commitment encouraged)</li>
+            <li><strong>Includes:</strong> Customized run/strength programming, HR &amp; pace zones, race strategy, nutrition &amp; mental training, unlimited coach contact, and local workouts</li>
+            <li><strong>Best for:</strong> Athletes preparing for target 'A' races who want complete, tailored coaching and 1:1 accountability</li>
+          </ul>
+        </li>
+        <li>
+          <span class="services-squiggles services-squiggles--top-left" aria-hidden="true"></span>
+          <h3>Sweat and Have Fun Group Coaching</h3>
+          <p class="services-meta">Group Training | Pricing varies</p>
+          <p>Have an event or group that needs a dynamic, high-energy group workout? Group coaching is tailored to your group's specific skill level and needs.</p>
+          <ul class="services-list">
+            <li><strong>Format:</strong> Single classes or multi-week programs</li>
+            <li><strong>Includes:</strong> Guided HIIT and run-type workouts, speed and strength conditioning, group accountability, and team community</li>
+            <li><strong>Best for:</strong> Communities who want high-energy conditioning to boost fitness</li>
+          </ul>
+        </li>
+      </ul>
+      <a class="services-cta" href="/contact/">Request more info</a>
+    </div>
+  </section>
+  <section class="coach" id="coach">
+    <div class="coach-text">
+      <h2 class="coach-heading">
+        Coach Sami
+        <span class="arc-line">
+          {{ partial "trackshape.html" (dict "color" "#8FBEDD" "flip" false) }}
+        </span>
+      </h2>
+      <p>
+      As an <a href="#">RRCA-certified coach</a>, Boston Marathon finisher, and top-3 Ironman 70.3 age-grouper, I’ve spent years competing across endurance sports and coaching athletes of all ages—from middle school cross country runners and youth swimmers to water polo teams and masters swimmers. Through it all, I’ve learned that athletic success isn't just about race-day outcomes, but about recognizing that we are living and training in the glory days right now. My coaching philosophy is whole-person focused, ensuring training remains sustainable, rewarding, and aligned with your broader life goals. Strides Training Club was born out of a desire among friends to train intentionally, travel to destination races, and build a vibrant community together. From playful warm-up drills to sneakily tough workouts that bring out our best as a team, I use my diverse coaching background to foster connection, elevate performance, and help every runner thrive in every season of life.
+      </p>
+    </div>
+    <div class="coach-carousel" aria-roledescription="carousel" aria-label="Photos of Coach Sami">
+      <ul class="coach-stage">
+        <li class="coach-slide"><img src="/carousel/head.png" alt="Coach Sami smiling" width="798" height="854"></li>
+        <li class="coach-slide"><img src="/carousel/dance.png" alt="Coach Sami dancing in headphones" width="896" height="1052"></li>
+        <li class="coach-slide"><img src="/carousel/bike.png" alt="Coach Sami cycling" width="858" height="854"></li>
+      </ul>
+      <div class="coach-dots" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </section>
+  <section class="contact" id="contact">
+    <div class="contact-lines" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <h2 class="contact-heading">Get in contact!</h2>
+    {{ $endpoint := .Site.Params.contactEndpoint }}
+    <form class="contact-form" action="{{ $endpoint | default "#" }}" method="post">
+      <label for="contact-name">Name</label>
+      <input id="contact-name" name="name" type="text" placeholder="Your name here!" autocomplete="name" required>
+
+      <label for="contact-email">Email</label>
+      <input id="contact-email" name="email" type="email" placeholder="Your email here!" autocomplete="email" required>
+
+      <label for="contact-message">Message</label>
+      <textarea id="contact-message" name="message" rows="5" placeholder="Tell me more about coaching." required></textarea>
+
+      <div class="contact-honeypot" aria-hidden="true">
+        <label for="contact-company">Company</label>
+        <input id="contact-company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <input name="elapsed" type="hidden" value="0" data-contact-elapsed>
+
+      <button class="contact-submit" type="submit">Send message</button>
+      <p class="contact-status" role="status" aria-live="polite" data-contact-status></p>
+    </form>
+    {{ if $endpoint }}
+      {{ partial "contact-script.html" . }}
+    {{ end }}
   </section>
 {{ end }}

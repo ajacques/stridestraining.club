@@ -1,0 +1,63 @@
+@import "carousel";
+
+.coach {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+  overflow-x: clip;
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: 3rem 2rem 4rem;
+}
+
+.coach-heading {
+  position: relative;
+  width: max-content;
+  margin: 0 0 6rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $c-blue;
+
+  .arc-line {
+    position: absolute;
+    bottom: -2rem;
+    left: -2rem;
+    width: 11rem;
+    z-index: 0;
+    pointer-events: none;
+
+    .arc-lines {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.coach-text p {
+  position: relative;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  z-index: 1;
+
+  a {
+    color: $c-blue;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 48rem) {
+  .coach {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .coach-heading .arc-line {
+    left: 2rem;
+    width: 7rem;
+  }
+}
