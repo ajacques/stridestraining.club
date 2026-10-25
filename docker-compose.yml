@@ -20,3 +20,35 @@ services:
       - "1313:1313"
     volumes:
       - .:/src:cached
+    environment:
+      # Point the contact form at the local Worker (see README/worker docs).
+      - HUGO_PARAMS_CONTACTENDPOINT=${CONTACT_ENDPOINT:-http://localhost:8787/}
+
+  # Contact form Worker on :8787.
+  #
+  # Outbound SMTP over `cloudflare:sockets` does NOT work in wrangler's local
+  # runtime ("proxy request failed, cannot connect to the specified address").
+  # Set WRANGLER_REMOTE=1 to run the Worker on Cloudflare's network instead,
+  # which requires CLOUDFLARE_API_TOKEN (or `wrangler login` on the host).
+  wrangler:
+    working_dir: /worker
+    build:
+      context: worker
+    # ca-certificates is required: the slim image has no system trust store and
+    # workerd aborts with "No CA certificates were loaded from the system".
+    command: npx wrangler dev --ip 0.0.0.0 --port 8787 ${WRANGLER_REMOTE:+--remote} --var ALLOWED_ORIGINS:http://localhost:1313,https://samilee.me --var SITE_URL:http://localhost:1313
+    ports:
+      - "8787:8787"
+      - "8976:8976"
+    volumes:
+      - ./worker:/worker:cached
+      # Keep container-installed deps (incl. the workerd binary) separate from
+      # the host's node_modules so the two platforms never clash.
+      - /worker/node_modules
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+    env_file:
+      # Holds SMTP_HOST, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL, TO_EMAIL, etc.
+      # Copy worker/.dev.vars.example first; optional so compose starts without it.
+      - path: ./worker/.dev.vars
+        required: false

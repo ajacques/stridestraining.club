@@ -2,6 +2,10 @@ baseURL = 'https://samilee.me'
 languageCode = 'en-us'
 title = 'Sami Lee'
 
+[params]
+  # URL of the contact form Worker (see worker/README.md).
+  contactEndpoint = ''
+
 [outputs]
   home = ['HTML']
   page = ['HTML']
