@@ -57,7 +57,6 @@ main {
 
 .coach-track {
   display: flex;
-  width: max-content;
 }
 
 .coach-set {
@@ -112,10 +111,6 @@ main {
     justify-content: flex-start;
   }
 
-  .coach-set--copy {
-    display: flex;
-  }
-
   .coach-set {
     gap: 4rem;
     padding-right: 4rem;
@@ -123,12 +118,27 @@ main {
     p {
       font-size: 1.1rem;
     }
+  } 
+}
+
+@media (max-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  .coach-track {
+    animation: coach-marquee 20s linear infinite;
+    width: max-content;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .coach-track {
-      animation: coach-marquee 20s linear infinite;
-    }
+  .coach-set--copy {
+    display: flex;
+  }
+}
+
+@media (max-width: 48rem) and (prefers-reduced-motion: reduce) {
+  .coach-track {
+    gap: 1rem;
+  }
+  .coach-set {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 

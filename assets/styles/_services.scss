@@ -21,6 +21,11 @@
     background-size: cover;
     z-index: 2;
     pointer-events: none;
+
+    @media (max-width: 48rem) {
+      // Bump the background left a bit on small screens to avoid hard to read borders
+      left: -2rem;
+    }
   }
 
 }
@@ -32,6 +37,10 @@
   font-size: 2rem;
   font-weight: 700;
   color: #fff;
+
+  @media (max-width: 48rem) {
+    padding-top: 2rem;
+  }
 
   .arc-line {
     position: absolute;

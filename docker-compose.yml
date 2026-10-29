@@ -1,17 +1,4 @@
 ---
-x-app: &app
-  mem_limit: 512m
-  build:
-    context: .
-    dockerfile: Dockerfile
-    # Targeting the development stage won't run bundle/yarn when building the docker image.
-    # It means you can add a new gem or NPM package without having to wait for docker to rebuild.
-    target: development
-  volumes:
-    - .:/usr/src/app:cached
-  tmpfs:
-    - /tmp
-
 services:
   web:
     image: hugomods/hugo:exts
