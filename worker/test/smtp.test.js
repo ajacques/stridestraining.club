@@ -28,7 +28,19 @@ function fakeConnection(replies) {
     },
   });
 
-  return { socket: { readable, writable, opened: Promise.resolve({}), close: async () => {} }, written };
+  const socket = {
+    readable,
+    writable,
+    opened: Promise.resolve({}),
+    close: async () => {},
+    /* STARTTLS upgrade: the fake server is already "encrypted", so hand back the
+       same streams and keep recording writes. */
+    startTls() {
+      return { readable, writable, opened: Promise.resolve({}), close: async () => {}, startTls() {} };
+    },
+  };
+
+  return { socket, written };
 }
 
 const connectWith = (replies) => {
@@ -36,11 +48,13 @@ const connectWith = (replies) => {
   return { connect: () => socket, written };
 };
 
-test("performs EHLO, AUTH, MAIL, RCPT, DATA and QUIT in order", async () => {
-  const { connect, written } = connectWith([
+test("performs EHLO, STARTTLS, AUTH, MAIL, RCPT, DATA and QUIT in order", async () => {
+  const calls = [];
+  const { socket, written } = fakeConnection([
     "220 fake ESMTP",
-    "250-fake", // EHLO
-    "250 AUTH PLAIN",
+    "250 fake", // EHLO
+    "220 Go ahead", // STARTTLS
+    "250 fake", // EHLO after upgrade
     "235 2.7.0 Authentication successful", // AUTH
     "250 2.1.0 Ok", // MAIL FROM
     "250 2.1.5 Ok", // RCPT TO
@@ -49,13 +63,18 @@ test("performs EHLO, AUTH, MAIL, RCPT, DATA and QUIT in order", async () => {
     "221 2.0.0 Bye", // QUIT
   ]);
 
+  const connect = (options, socketOptions) => {
+    calls.push(socketOptions);
+    return socket;
+  };
+
   const sendMail = createSmtpClient(connect);
   await sendMail({
     host: "smtp.example.com",
     port: 587,
     username: "user@example.com",
     password: "hunter2",
-    secure: "off",
+    secure: "starttls",
     from: "noreply@example.com",
     to: "coach@example.com",
     subject: "Hello",
@@ -64,8 +83,10 @@ test("performs EHLO, AUTH, MAIL, RCPT, DATA and QUIT in order", async () => {
     replyTo: "visitor@example.com",
   });
 
+  assert.equal(calls[0].secureTransport, "starttls", "socket should be opened with STARTTLS");
   const sent = written.join("");
   assert.match(sent, /^EHLO /);
+  assert.match(sent, /STARTTLS/);
   assert.match(sent, /AUTH PLAIN /);
   assert.ok(!sent.includes("hunter2"), "password must be base64 encoded, not plaintext");
   assert.match(sent, /MAIL FROM:<noreply@example\.com>/);
@@ -79,6 +100,8 @@ test("throws with the server code when a command is rejected", async () => {
   const { connect } = connectWith([
     "220 fake ESMTP",
     "250 ok", // EHLO
+    "220 Go ahead", // STARTTLS
+    "250 ok", // EHLO after upgrade
     "250 ok", // MAIL FROM
     "550 5.1.1 No such user", // RCPT TO
   ]);
@@ -88,7 +111,7 @@ test("throws with the server code when a command is rejected", async () => {
     sendMail({
       host: "smtp.example.com",
       port: 587,
-      secure: "off",
+      secure: "starttls",
       from: "noreply@example.com",
       to: "missing@example.com",
       subject: "Hi",
@@ -103,57 +126,42 @@ test("throws with the server code when a command is rejected", async () => {
   );
 });
 
-test("upgrades the socket with STARTTLS before authenticating", async () => {
-  const calls = [];
-  const { socket } = fakeConnection([
-    "220 fake ESMTP",
-    "250-fake",
-    "250 STARTTLS", // EHLO
-    "220 Go ahead", // STARTTLS
-    "250-fake",
-    "250 AUTH PLAIN", // EHLO again after upgrade
-    "235 ok", // AUTH
-    "250 ok", // MAIL
-    "250 ok", // RCPT
-    "354 go", // DATA
-    "250 queued",
-    "221 bye",
-  ]);
+test("refuses to send without TLS", async () => {
+  for (const secure of ["off", undefined]) {
+    let connected = false;
+    const connect = () => {
+      connected = true;
+      throw new Error("connect should not be called");
+    };
 
-  const secureSocket = {
-    readable: socket.readable,
-    writable: socket.writable,
-    opened: Promise.resolve({}),
-    close: async () => {},
-  };
-
-  const connect = (address, options) => {
-    calls.push({ address, options });
-    return { ...socket, startTls: () => (calls.push("starttls"), { ...secureSocket, startTls() {} }) };
-  };
-
-  const sendMail = createSmtpClient(connect);
-  await sendMail({
-    host: "smtp.example.com",
-    port: 587,
-    username: "user@example.com",
-    password: "secret",
-    secure: "starttls",
-    from: "noreply@example.com",
-    to: "coach@example.com",
-    subject: "Hi",
-    text: "body",
-    html: "<p>body</p>",
-  });
-
-  assert.equal(calls[0].options.secureTransport, "starttls");
-  assert.ok(calls.includes("starttls"), "socket should be upgraded via startTls()");
+    const sendMail = createSmtpClient(connect);
+    await assert.rejects(
+      sendMail({
+        host: "smtp.example.com",
+        port: 25,
+        secure,
+        from: "noreply@example.com",
+        to: "coach@example.com",
+        subject: "Hi",
+        text: "body",
+        html: "<p>body</p>",
+      }),
+      (error) => {
+        assert.equal(error.stage, "transport");
+        assert.match(error.message, /insecure transport/);
+        return true;
+      },
+    );
+    assert.equal(connected, false, "must not open an insecure socket");
+  }
 });
 
 test("supports AUTH LOGIN from credentials", async () => {
   const { connect, written } = connectWith([
     "220 fake ESMTP",
     "250 ok", // EHLO
+    "220 Go ahead", // STARTTLS
+    "250 ok", // EHLO after upgrade
     "334 VXNlcm5hbWU6", // AUTH LOGIN
     "334 UGFzc3dvcmQ6", // username
     "235 ok", // password
@@ -171,7 +179,7 @@ test("supports AUTH LOGIN from credentials", async () => {
     username: "user@example.com",
     password: "hunter2",
     auth: "login",
-    secure: "off",
+    secure: "starttls",
     from: "noreply@example.com",
     to: "coach@example.com",
     subject: "Hi",
@@ -188,10 +196,12 @@ test("supports AUTH LOGIN from credentials", async () => {
 test("skips AUTH when auth is none", async () => {
   const { connect, written } = connectWith([
     "220 fake ESMTP",
-    "250 ok",
-    "250 ok",
-    "250 ok",
-    "354 go",
+    "250 ok", // EHLO
+    "220 Go ahead", // STARTTLS
+    "250 ok", // EHLO after upgrade
+    "250 ok", // MAIL
+    "250 ok", // RCPT
+    "354 go", // DATA
     "250 queued",
     "221 bye",
   ]);
@@ -199,11 +209,11 @@ test("skips AUTH when auth is none", async () => {
   const sendMail = createSmtpClient(connect);
   await sendMail({
     host: "smtp.example.com",
-    port: 25,
+    port: 587,
     username: "user@example.com",
     password: "hunter2",
     auth: "none",
-    secure: "off",
+    secure: "starttls",
     from: "noreply@example.com",
     to: "coach@example.com",
     subject: "Hi",

@@ -62,7 +62,16 @@ export function createSmtpClient(connect, { timeoutMs = 15000 } = {}) {
   return async function sendMail(config) {
     const { host, port, username, password, auth = "plain", secure, from, to, subject, text, html, replyTo } = config;
 
-    const transport = secure === "tls" ? "on" : secure === "starttls" ? "starttls" : "off";
+    // Plaintext SMTP is never acceptable: credentials and message bodies would
+    // be sent in the clear. Only implicit TLS and STARTTLS are supported.
+    if (secure !== "tls" && secure !== "starttls") {
+      throw new SmtpError(
+        `Refusing to send over insecure transport (SMTP_SECURE=${secure ?? "unset"}); use "tls" or "starttls"`,
+        { stage: "transport" },
+      );
+    }
+
+    const transport = secure === "tls" ? "on" : "starttls";
     let socket = connect({ hostname: host, port }, { secureTransport: transport });
 
     let writer = socket.writable.getWriter();
