@@ -25,6 +25,7 @@ Edit `[vars]` in `wrangler.toml`:
 | `SMTP_PASSWORD` | SMTP password (env var, **secret**) |
 | `FROM_EMAIL` | From header, e.g. `Sami Lee <noreply@samilee.me>` |
 | `TO_EMAIL` | Where enquiries are delivered |
+| `TURNSTILE_SECRET` | Cloudflare Turnstile secret key (env var, **secret**); unset disables verification |
 
 Both SMTP credentials are read from environment variables. Only the password
 needs to be a secret; the username can live in `[vars]`.
@@ -32,6 +33,7 @@ needs to be a secret; the username can live in `[vars]`.
 ```sh
 cd worker
 npx wrangler secret put SMTP_PASSWORD
+npx wrangler secret put TURNSTILE_SECRET   # optional: enables Turnstile checks
 npx wrangler deploy
 ```
 
@@ -53,6 +55,33 @@ Set the endpoint in `hugo.toml` (or per environment):
 
 Pointing the form at `action="#"` while `contactEndpoint` is empty leaves the
 form inert — set the param before deploying.
+
+### Cloudflare Turnstile
+
+The form is protected by [Turnstile](https://developers.cloudflare.com/turnstile/).
+Add the widget's **site key** to `hugo.toml`:
+
+```toml
+[params]
+  turnstileSiteKey = "<your-site-key>"
+```
+
+and the matching **secret key** to the Worker:
+
+```sh
+cd worker
+npx wrangler secret put TURNSTILE_SECRET
+```
+
+`layouts/partials/contact-script.html` loads `api.js` lazily — only once the
+visitor starts typing in the form — then renders the widget and sends the token
+as `cf-turnstile-response`. The Worker verifies it with Cloudflare's
+`siteverify` endpoint before sending mail.
+
+Leave **both** values empty in local development to skip the check: with no
+`params.turnstileSiteKey` the widget is not rendered, and with no
+`TURNSTILE_SECRET` the Worker accepts submissions without a token. Setting only
+one of them will block every submission.
 
 ## Local development with docker compose
 

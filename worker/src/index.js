@@ -1,5 +1,6 @@
 import { connect } from "cloudflare:sockets";
 import { createSmtpClient, escapeHtml } from "./smtp.js";
+import { createTurnstileVerifier } from "./turnstile.js";
 
 const MAX_BODY_BYTES = 16 * 1024;
 const MAX_NAME = 120;
@@ -8,6 +9,7 @@ const MAX_MESSAGE = 5000;
 const MIN_FILL_MS = 1500;
 
 const sendMail = createSmtpClient(connect);
+const verifyTurnstile = createTurnstileVerifier();
 
 const parseList = (value) =>
   (value || "")
@@ -36,7 +38,7 @@ const wantsHtml = (request) =>
   request.headers.get("Accept")?.includes("text/html") ?? false;
 
 function successResponse(env, request) {
-  const target = redirectTarget(env, "SUCCESS_REDIRECT", "/thanks/");
+  const target = redirectTarget(env, "SUCCESS_REDIRECT", "/thanks");
   if (wantsHtml(request)) {
     return Response.redirect(target, 303);
   }
@@ -75,6 +77,7 @@ function validate(fields) {
   const email = String(fields.email ?? "").trim();
   const message = String(fields.message ?? "").trim();
   const elapsed = Number(fields.elapsed ?? 0);
+  const turnstileToken = String(fields["cf-turnstile-response"] ?? "").trim();
 
   if (fields.company) return { spam: true };
   if (Number.isFinite(elapsed) && elapsed > 0 && elapsed < MIN_FILL_MS) return { spam: true };
@@ -89,7 +92,7 @@ function validate(fields) {
     return { error: "Please enter a message." };
   }
 
-  return { name, email, message };
+  return { name, email, message, turnstileToken };
 }
 
 function composeEmail({ name, email, message }) {
@@ -144,6 +147,15 @@ export default {
     }
     if (result.error) {
       return errorResponse(env, request, 400, result.error);
+    }
+
+    const verified = await verifyTurnstile(
+      env,
+      result.turnstileToken,
+      request.headers.get("CF-Connecting-IP"),
+    );
+    if (!verified) {
+      return errorResponse(env, request, 400, "Verification failed. Please complete the challenge and try again.");
     }
 
     const { text, html } = composeEmail(result);

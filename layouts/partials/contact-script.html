@@ -1,13 +1,18 @@
-{{ $endpoint := .Site.Params.contactEndpoint }}
-{{ $thanks := "/thanks/" | absURL }}
+{{ $config := dict
+  "endpoint" .Site.Params.contactEndpoint
+  "siteKey" .Site.Params.turnstileSiteKey
+  "thanksUrl" ("/thanks/" | absURL)
+}}
 <script>
   (() => {
     /* Set on page load so the Worker can reject sub-second (bot) submissions. */
     const startedAt = Date.now();
-    /* Endpoint comes from hugo.toml; empty means the plain HTML POST is used. */
-    const endpoint = {{ $endpoint | jsonify }};
-    /* Thanks page, used as the fallback destination after a JSON success. */
-    const thanksUrl = {{ $thanks | jsonify }};
+    /* Endpoint, thanks page and Turnstile site key come from hugo.toml. */
+    const config = {{ $config | jsonify | safeJS }};
+    const endpoint = config.endpoint;
+    const thanksUrl = config.thanksUrl;
+    /* Empty site key means the widget is not rendered. */
+    const turnstileSiteKey = config.siteKey;
 
     document.querySelectorAll(".contact-form").forEach((form) => {
       if (!endpoint) return;
@@ -15,6 +20,7 @@
       const status = form.querySelector("[data-contact-status]");
       const elapsed = form.querySelector("[data-contact-elapsed]");
       const submit = form.querySelector(".contact-submit");
+      const turnstileEl = form.querySelector("[data-turnstile-sitekey]");
 
       const showStatus = (message, isError) => {
         if (!status) return;
@@ -22,11 +28,66 @@
         status.classList.toggle("is-error", Boolean(isError));
       };
 
+      /* Token for the current challenge; Turnstile tokens are single-use. */
+      let turnstileToken = "";
+
+      if (turnstileEl && turnstileSiteKey) {
+        const render = () => {
+          window.turnstile.render(turnstileEl, {
+            sitekey: turnstileSiteKey,
+            theme: "light",
+            callback: (token) => {
+              turnstileToken = token;
+              showStatus("", false);
+            },
+            "expired-callback": () => {
+              turnstileToken = "";
+            },
+            "error-callback": () => {
+              turnstileToken = "";
+              showStatus("Verification failed. Please reload the page and try again.", true);
+            },
+          });
+        };
+
+        /* Defer the challenge script until the visitor actually engages with the
+           form, so it never loads for passive page views. */
+        let turnstileStarted = false;
+        const startTurnstile = () => {
+          if (turnstileStarted) return;
+          turnstileStarted = true;
+
+          if (window.turnstile) {
+            render();
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+          script.async = true;
+          script.defer = true;
+          script.onload = render;
+          script.onerror = () => {
+            showStatus("Verification failed to load. Please reload the page and try again.", true);
+          };
+          document.head.appendChild(script);
+        };
+
+        form.addEventListener("input", startTurnstile);
+      }
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
+        if (turnstileEl && turnstileSiteKey && !turnstileToken) {
+          event.stopImmediatePropagation();
+          showStatus("Please complete the verification challenge before sending.", true);
+          return;
+        }
+
         const data = Object.fromEntries(new FormData(form));
         if (elapsed) data.elapsed = String(Date.now() - startedAt);
+        if (turnstileEl && turnstileSiteKey) data["cf-turnstile-response"] = turnstileToken;
 
         submit.disabled = true;
         showStatus("Sending…", false);
@@ -46,6 +107,11 @@
           window.location.assign(result.redirect || thanksUrl);
         } catch (error) {
           submit.disabled = false;
+          /* Tokens must be reissued after the single-use one was spent. */
+          if (turnstileEl && window.turnstile) {
+            turnstileToken = "";
+            window.turnstile.reset(turnstileEl);
+          }
           showStatus(error.message, true);
         }
       });
