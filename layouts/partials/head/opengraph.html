@@ -1,0 +1,27 @@
+{{ $image := "" }}
+{{ with site.Params.ogImage }}
+  {{ with resources.Get . }}
+    {{ $image = . | fingerprint "sha256" }}
+  {{ end }}
+{{ end }}
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}">
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{- with $image }}
+<meta property="og:image" content="{{ .Permalink }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Strides Training Club">
+{{- end }}
+<meta property="og:locale" content="{{ replace site.Language.LanguageCode "-" "_" }}">
+<meta name="twitter:card" content="{{ if $image }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}">
+<meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+{{- with $image }}
+<meta name="twitter:image" content="{{ .Permalink }}">
+{{- end }}
+{{- with site.Params.twitterHandle }}
+<meta name="twitter:site" content="{{ . }}">
+{{- end }}
