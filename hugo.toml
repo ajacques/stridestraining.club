@@ -4,7 +4,7 @@ title = 'Sami Lee'
 
 [params]
   # URL of the contact form Worker (see worker/README.md).
-  contactEndpoint = ''
+  contactEndpoint = '/contact'
   # Cloudflare Turnstile site key. Leave empty to render the form without the
   # widget; the Worker's secret must then be unset too (see worker/README.md).
   turnstileSiteKey = ''
