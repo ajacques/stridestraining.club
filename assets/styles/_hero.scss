@@ -53,6 +53,7 @@ main {
   max-width: 74rem;
   margin: 0 auto;
   padding: 0.5rem 0 3rem;
+  overflow: hidden;
 }
 
 .coach-track {
@@ -105,10 +106,11 @@ main {
     width: 5rem;
   }
 
-  .hero .coach-row {
+  .coach-row {
     width: 100%;
     overflow: hidden;
     justify-content: flex-start;
+    padding: 0.5rem 0 2rem;
   }
 
   .coach-set {

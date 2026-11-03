@@ -84,6 +84,12 @@
   }
 }
 
+/* Cloudflare Turnstile widget, rendered just above the submit button. */
+.contact-turnstile {
+  margin-top: 0.4rem;
+  min-height: 65px;
+}
+
 .contact-submit {
   align-self: flex-start;
   margin-top: 0.5rem;

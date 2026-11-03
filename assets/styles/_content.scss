@@ -30,7 +30,13 @@
 }
 
 @media (max-width: 48rem) {
-  .about {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.about {
     padding: 1rem 1rem 0;
   }
 

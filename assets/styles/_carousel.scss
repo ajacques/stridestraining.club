@@ -102,27 +102,27 @@
 
 @media (max-width: 48rem) {
   .coach-carousel {
-    height: 22rem;
+    height: 26rem;
   }
 
   .coach-stage {
     width: 100%;
-    height: 22rem;
+    height: 26rem;
   }
 
   .coach-slide {
-    --gap: 3.25rem;
+    --gap: 3.5rem;
     --scale: 0.55;
-    width: 12rem;
+    width: 15rem;
 
     &.is-front {
-      --scale: 1;
+      --scale: 1.2;
     }
 
     &.is-left,
     &.is-right {
-      --gap: 3.25rem;
-      --scale: 0.55;
+      --gap: 4rem;
+      --scale: 0.6;
     }
   }
 }

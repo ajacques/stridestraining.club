@@ -141,6 +141,10 @@
       </div>
       <input name="elapsed" type="hidden" value="0" data-contact-elapsed>
 
+      {{ with .Site.Params.turnstileSiteKey }}
+        <div class="contact-turnstile" data-turnstile-sitekey="{{ . }}"></div>
+      {{ end }}
+
       <button class="contact-submit" type="submit">Send message</button>
       <p class="contact-status" role="status" aria-live="polite" data-contact-status></p>
     </form>
