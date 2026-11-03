@@ -5,9 +5,9 @@
     /* Set on page load so the Worker can reject sub-second (bot) submissions. */
     const startedAt = Date.now();
     /* Endpoint comes from hugo.toml; empty means the plain HTML POST is used. */
-    const endpoint = {{ $endpoint | jsonify }};
+    const endpoint = {{ safeJSStr $endpoint }};
     /* Thanks page, used as the fallback destination after a JSON success. */
-    const thanksUrl = {{ $thanks | jsonify }};
+    const thanksUrl = {{ safeJSStr $thanks }};
 
     document.querySelectorAll(".contact-form").forEach((form) => {
       if (!endpoint) return;

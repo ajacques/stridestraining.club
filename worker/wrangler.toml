@@ -5,6 +5,6 @@ compatibility_date = "2026-01-01"
 [vars]
 SITE_URL = "https://stridesrunning.club"
 ALLOWED_ORIGINS = "https://stridesrunning.club"
-SUCCESS_REDIRECT = "/thanks"
+SUCCESS_REDIRECT = "/email-thanks"
 ERROR_REDIRECT = "/email-fail/#contact"
 SUBJECT_TEMPLATE = "New coaching enquiry from {name}"
