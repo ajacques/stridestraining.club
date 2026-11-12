@@ -93,8 +93,10 @@ export function createSmtpClient(connect, { timeoutMs = 15000 } = {}) {
     };
 
     const command = async (line, expected, { redact = false } = {}) => {
+      console.log(line);
       await withTimeout(writer.write(encoder.encode(line + CRLF)), redact ? "AUTH" : line.slice(0, 4));
       const reply = await withTimeout(reader.readReply(), redact ? "AUTH" : line.slice(0, 4));
+      console.log(reply);
       if (!expected.includes(reply.code)) {
         throw new SmtpError(`Unexpected SMTP reply: ${reply.code} ${reply.text}`, {
           code: reply.code,
