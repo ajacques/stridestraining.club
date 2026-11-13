@@ -93,10 +93,8 @@ export function createSmtpClient(connect, { timeoutMs = 15000 } = {}) {
     };
 
     const command = async (line, expected, { redact = false } = {}) => {
-      console.log(line);
       await withTimeout(writer.write(encoder.encode(line + CRLF)), redact ? "AUTH" : line.slice(0, 4));
       const reply = await withTimeout(reader.readReply(), redact ? "AUTH" : line.slice(0, 4));
-      console.log(reply);
       if (!expected.includes(reply.code)) {
         throw new SmtpError(`Unexpected SMTP reply: ${reply.code} ${reply.text}`, {
           code: reply.code,
@@ -143,8 +141,18 @@ export function createSmtpClient(connect, { timeoutMs = 15000 } = {}) {
 
       const message = buildMessage({ from, to, subject, text, html, replyTo });
       await withTimeout(writer.write(encoder.encode(message + CRLF + "." + CRLF)), "DATA body");
-      await command("", [250]);
-      await command("QUIT", [221]);
+      const accepted = await withTimeout(reader.readReply(), "DATA");
+      if (accepted.code !== 250) {
+        throw new SmtpError(`Unexpected SMTP reply: ${accepted.code} ${accepted.text}`, {
+          code: accepted.code,
+          stage: "DATA",
+        });
+      }
+      try {
+        await command("QUIT", [221]);
+      } catch {
+        // Some servers drop the connection without replying to QUIT; mail is already accepted.
+      }
     } finally {
       try {
         await socket.close();
