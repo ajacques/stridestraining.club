@@ -1,5 +1,5 @@
 ---
 title: Thanks
-url: /thanks/
+url: /email-thanks/
 type: thanks
 ---
