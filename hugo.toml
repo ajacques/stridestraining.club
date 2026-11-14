@@ -1,13 +1,18 @@
 baseURL = 'https://samilee.me'
 languageCode = 'en-us'
-title = 'Sami Lee'
+title = 'Strides Training Club'
 
 [params]
   # URL of the contact form Worker (see worker/README.md).
-  contactEndpoint = ''
+  contactEndpoint = '/contact'
   # Cloudflare Turnstile site key. Leave empty to render the form without the
   # widget; the Worker's secret must then be unset too (see worker/README.md).
   turnstileSiteKey = ''
+  # Social share card. Path to a file in assets/ (fingerprinted at build time).
+  # Empty disables og:image / twitter:image.
+  ogImage = ''
+  # Short page summary used for meta/OpenGraph/Twitter descriptions.
+  description = 'Athletic coaching built for real life.'
 
 [outputs]
   home = ['HTML']

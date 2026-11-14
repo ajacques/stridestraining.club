@@ -4,8 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
     <link rel="canonical" href="{{ .Permalink }}">
     {{ partials.Include "head/style.html" . }}
+    {{ partials.Include "head/opengraph.html" . }}
     <link rel="icon" type="image/svg+xml" href="{{- (resources.Get "logo.svg").RelPermalink -}}">
   </head>
   <body>

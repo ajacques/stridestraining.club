@@ -80,7 +80,9 @@ function validate(fields) {
   const turnstileToken = String(fields["cf-turnstile-response"] ?? "").trim();
 
   if (fields.company) return { spam: true };
-  if (Number.isFinite(elapsed) && elapsed > 0 && elapsed < MIN_FILL_MS) return { spam: true };
+  if (!elapsed || !Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) return {
+    spam: true
+  };
 
   if (!name || name.length > MAX_NAME) {
     return { error: "Please enter your name." };

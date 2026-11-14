@@ -9,8 +9,10 @@
     const startedAt = Date.now();
     /* Endpoint, thanks page and Turnstile site key come from hugo.toml. */
     const config = {{ $config | jsonify | safeJS }};
-    const endpoint = config.endpoint;
-    const thanksUrl = config.thanksUrl;
+    /* Endpoint comes from hugo.toml; empty means the plain HTML POST is used. */
+    const endpoint = {{ safeJSStr $endpoint }};
+    /* Thanks page, used as the fallback destination after a JSON success. */
+    const thanksUrl = {{ safeJSStr $thanks }};
     /* Empty site key means the widget is not rendered. */
     const turnstileSiteKey = config.siteKey;
 

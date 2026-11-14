@@ -7,6 +7,10 @@ Pages and sends it to you over SMTP using the Worker's outbound TCP sockets
 Workers cannot connect to port 25, but 465 (implicit TLS) and 587 (STARTTLS)
 both work. Set `SMTP_SECURE = "tls"` for 465.
 
+Plaintext SMTP is not supported: `SMTP_SECURE` must be `starttls` or `tls`.
+Any other value (including `off`) is rejected before a socket is opened, so
+credentials and message bodies are never sent in the clear.
+
 ## Configuration
 
 Edit `[vars]` in `wrangler.toml`:
@@ -19,7 +23,7 @@ Edit `[vars]` in `wrangler.toml`:
 | `ERROR_REDIRECT` | Page to send the browser to on failure |
 | `SUBJECT_TEMPLATE` | Email subject; `{name}` is replaced with the sender's name |
 | `SMTP_HOST` / `SMTP_PORT` | Your mail server |
-| `SMTP_SECURE` | `starttls` (587), `tls` (465), or `off` |
+| `SMTP_SECURE` | `starttls` (587) or `tls` (465); plaintext is refused |
 | `SMTP_AUTH` | `plain` (default), `login`, or `none` |
 | `SMTP_USERNAME` | SMTP login (env var; leave blank to skip AUTH) |
 | `SMTP_PASSWORD` | SMTP password (env var, **secret**) |
